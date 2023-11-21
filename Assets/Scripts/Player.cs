@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static event System.Action playerMoved;
+    public static event System.Action PlayerMoved;
+    public static event System.Action PlayerGrounded;
+    public static event System.Action SpecialStart;
+    public static event System.Action SpecialCanceled;
 
     public Rigidbody RB;
     public float speed = 2;
@@ -16,13 +19,17 @@ public class Player : MonoBehaviour
         RB = this.GetComponent<Rigidbody>();
     }
 
+    //Update player data
+    
+    //Move player
     public void MovePlayerToDir(Vector3 dir)
     {
         //Trigger player has moved
-        playerMoved?.Invoke();
+        PlayerMoved?.Invoke();
         this.transform.position += speed * dir;
     }
 
+    //What happens when player touches stuff like enemies, coins or ground?
     public void OnTriggerEnter(Collider other)
     {
         //If trigger is coink
@@ -40,7 +47,51 @@ public class Player : MonoBehaviour
                 other.gameObject.SetActive(false);
             }
         }
+
+        if (other.gameObject.GetComponent<SpecialPower>())
+        {
+            other.gameObject.SetActive(false);
+            StartCoroutine(SpecialGrow());
+        }
+    }
+
+    public void OnCollisionEnter(Collision other)
+    {
+        //If colliding with ground
+        if(other.gameObject.layer == 6)
+        {
+            PlayerGrounded?.Invoke();
+        }
     }
 
 
+    //Crouch
+    public void Crouch(bool crouch)
+    {
+        //If player should crouch
+        if (crouch)
+        {
+            transform.localScale = new Vector3(1f, 0.5f, 1f);
+        }
+        else
+        {
+            transform.localScale = new Vector3(1f, 1f, 1f);
+        }
+    }
+
+    //Special power IENUMERATOR
+    //You are now big for 10 seconds
+    IEnumerator SpecialGrow()
+    {
+        SpecialStart?.Invoke();
+        transform.localScale = new Vector3(5f, 5f, 5f);
+        this.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color32(8, 212, 0,255);
+
+        for (int i = 0; i < 7; i++)
+        {
+            yield return new WaitForSeconds(1f);
+        }
+        transform.localScale = new Vector3(1f, 1f, 1f);
+        SpecialCanceled?.Invoke();
+    }
 }

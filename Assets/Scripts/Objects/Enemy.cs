@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        Player.playerMoved += MoveEnemy;
+        Player.PlayerMoved += MoveEnemy;
     }
 
     private void Update()
@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     {
         if(hp < 1)
         {
-            Player.playerMoved -= MoveEnemy; 
+            Player.PlayerMoved -= MoveEnemy; 
             BrutallyMurdered?.Invoke();
         }
 
@@ -35,7 +35,7 @@ public class Enemy : MonoBehaviour
 
     public void OnDestroy()
     {
-        Player.playerMoved -= MoveEnemy;
+        Player.PlayerMoved -= MoveEnemy;
     }
 
     public void MoveEnemy()

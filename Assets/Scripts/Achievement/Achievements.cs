@@ -5,12 +5,13 @@ using UnityEngine;
 public class Achievements : MonoBehaviour
 {
 
-    private const int achievementCount = 3;
+    private const int achievementCount = 4;
     public enum Achievement
     {
         Coin_Collector,
         Muumipeikko_Murskain,
-        Falling_To_Void
+        Falling_To_Void,
+        I_AM_GIGANTIOUS
     }
 
     private bool[] unlockedAchievements = new bool[achievementCount];
@@ -25,6 +26,7 @@ public class Achievements : MonoBehaviour
         Coin.OnCoinCollected += CoinWasCollected;      //Add listener to event  
         Enemy.FellDown += MoominFellDown;
         Enemy.BrutallyMurdered += KilledMoomin;
+        Player.SpecialStart += BeingGigantic;
     }
 
     void CoinWasCollected()
@@ -63,6 +65,16 @@ public class Achievements : MonoBehaviour
         {
             unlockedAchievements[i] = true;
             Debug.Log("YOU HAVE UNLOCKED ACHIEVEMENT FALLING TO VOID");
+        }
+    }
+
+    void BeingGigantic()
+    {
+        int i = (int)Achievement.I_AM_GIGANTIOUS;
+        if (!unlockedAchievements[i])
+        {
+            unlockedAchievements[i] = true;
+            Debug.Log("YOU HAVE UNLOCKED ACHIEVEMENT I AM HULK");
         }
     }
 

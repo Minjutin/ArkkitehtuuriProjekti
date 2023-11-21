@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     {
         GM = this;
         player = FindObjectOfType<Player>();
+
+        PlayerStateMachine.InitializeStates();
     }
 
 

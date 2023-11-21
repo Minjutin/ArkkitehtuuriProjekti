@@ -5,11 +5,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    readonly Command cmd_w = new ForwardCommand();
-    readonly Command cmd_a = new LeftCommand();
-    readonly Command cmd_s = new BackCommand();
-    readonly Command cmd_d = new RightCommand();
-    readonly Command cmd_space = new JumpCommand();
+    readonly Command cmd_fwd = new ForwardCommand();
+    readonly Command cmd_left = new LeftCommand();
+    readonly Command cmd_back = new BackCommand();
+    readonly Command cmd_right = new RightCommand();
+    readonly Command cmd_jump = new JumpCommand();
+    readonly Command cmd_crouch = new CrouchCommand();
    
 
     Stack<Command> previous_commands = new();
@@ -20,27 +21,30 @@ public class PlayerController : MonoBehaviour
         //MOVE
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            cmd_w.Execute();
-            previous_commands.Push(cmd_w);
+            cmd_fwd.Execute();
+            previous_commands.Push(cmd_fwd);
         }
 
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            cmd_a.Execute();
-            previous_commands.Push(cmd_a);
+            cmd_left.Execute();
+            previous_commands.Push(cmd_left);
         }
 
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            cmd_s.Execute();
-            previous_commands.Push(cmd_s);
+            cmd_back.Execute();
+            previous_commands.Push(cmd_back);
         }
 
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            cmd_d.Execute();
-            previous_commands.Push(cmd_d);
+            cmd_right.Execute();
+            previous_commands.Push(cmd_right);
         }
+
+
+        // ------------------ UNDO THINGS
 
         //UNDO MOVEMENT
         if (Input.GetKeyDown(KeyCode.Z))
@@ -62,11 +66,19 @@ public class PlayerController : MonoBehaviour
             deleted_commands.Clear();
         }
 
+        // ------------------ Do stuff
 
         //JUMP
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            cmd_space.Execute();
+            cmd_jump.Execute();
+        }
+
+
+        //Crouch
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            cmd_crouch.Execute();
         }
 
 
