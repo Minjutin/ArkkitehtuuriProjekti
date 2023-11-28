@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class GameOfLife : MonoBehaviour
 {
+    //Object we spawn
     public GameObject TileObject;
+
+    //How many tiles
     private static readonly int Width = 10;
-    private static readonly int Height = 10;
-    bool[,] grid = new bool[Width, Height];
-    GameObject[,] tiles = new GameObject[Width, Height];
+    private static readonly int Height = 10; 
+    Tile[,] tiles = new Tile[Width, Height]; //Array
 
     private float TimeAccu = 0.0f;
 
@@ -20,36 +22,41 @@ public class GameOfLife : MonoBehaviour
         {
             for (int y = 0; y < Height; y++)
             {
-                // Clear the grid
-                grid[x, y] = false;
                 // Instantiate the tile
-                tiles[x, y] = Instantiate(TileObject,
+                GameObject tile = Instantiate(TileObject,
                                         new Vector3(x, 0f, y) * 1.05f,
                                         TileObject.transform.rotation);
-                //tiles[x, y].SetActive(false);
-                tiles[x, y].GetComponent<MeshRenderer>().material.color = Color.black;
+                tiles[x,y] = tile.GetComponent<Tile>();
+                tiles[x, y].SetAlive(false);
+
+                tiles[x, y].gameObject.transform.parent = this.transform;
+                tiles[x, y].gameObject.name = "Tile " + x + ", " + y;
+                
             }
         }
 
-        grid[5, 5] = true;
-        tiles[5, 5].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[3, 5] = true;
-        tiles[3, 5].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[4, 4] = true;
-        tiles[4, 4].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[1, 4] = true;
-        tiles[1, 4].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[2, 3] = true;
-        tiles[2, 3].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[1, 3] = true;
-        tiles[1, 3].GetComponent<MeshRenderer>().material.color = Color.red;
-        grid[2, 2] = true;
-        tiles[2, 2].GetComponent<MeshRenderer>().material.color = Color.red;
+        //
+        tiles[1, 5].SetAlive(true);
+
+        tiles[3, 5].SetAlive(true);
+
+        tiles[4, 9].SetAlive(true);
+
+        tiles[3, 9].SetAlive(true);
+
+        tiles[2, 9].SetAlive(true);
+
+        tiles[2, 3].SetAlive(true);
+
+        tiles[2, 1].SetAlive(true);
+
+        tiles[2, 2].SetAlive(true);
 
 
 
     }
 
+    //Return how many neighbors tile has.
     private int GetLiveNeighbours(int x, int y)
     {
         int liveneighbours = 0;
@@ -60,7 +67,7 @@ public class GameOfLife : MonoBehaviour
                 if (!(i == x & j == y) && i >= 0 && j >= 0 && i < Width && j < Height)
                 {
                     // current i,j is not x,y
-                    if (grid[i, j] == true)
+                    if (tiles[i, j].alive)
                     {
                         liveneighbours++;
                     }
@@ -89,19 +96,19 @@ public class GameOfLife : MonoBehaviour
                     int live = GetLiveNeighbours(x, y);
                     if (live < 2)
                     {
-                        grid[x, y] = false;
+                        tiles[x, y].CheckNextStatus(false); //Too few neighbours, he automatically dies
                     }
-                    else if (live < 4 && grid[x, y] == true)
+                    else if (live < 4 && tiles[x, y].alive == true) //Keeps living
                     {
-                        // live on... do nothing
+                        tiles[x, y].CheckNextStatus(true);
                     }
-                    else if (live > 3 && grid[x, y] == true)
+                    else if (live > 3 && tiles[x, y].alive == true) //Too many neighbours, he dies
                     {
-                        grid[x, y] = false;
+                        tiles[x, y].CheckNextStatus(false); 
                     }
-                    else if (live == 3 && grid[x, y] == false)
+                    else if (live == 3 && tiles[x, y].alive == false) //3 neighbours, be born you peasant
                     {
-                        grid[x, y] = true;
+                        tiles[x, y].CheckNextStatus(true);
                     }
                 }
             }
@@ -111,16 +118,23 @@ public class GameOfLife : MonoBehaviour
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    if (grid[x, y] == true)
+                    if (tiles[x,y].nextAlive)
                     {
-                        tiles[x, y].GetComponent<MeshRenderer>().material.color = Color.red;
+                        tiles[x, y].SetAlive(true);
                     }
                     else
                     {
-                        tiles[x, y].GetComponent<MeshRenderer>().material.color = Color.black;
+                        tiles[x, y].SetAlive(false);
                     }
                 }
             }
+            TimeAccu = 0.0f;
         }
+
+    }
+
+    void ChangeTile(Tile tile)
+    {
+        return;
     }
 }
